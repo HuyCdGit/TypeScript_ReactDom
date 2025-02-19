@@ -35,3 +35,12 @@ export const fetchAccountAPI = () => {
     },
   });
 };
+
+export const logoutAPI = () => {
+  const urlBackEnd = "/api/v1/auth/logout";
+  return axios.post<IBackendRes>(urlBackEnd, {
+    headers: {
+      delay: 1000,
+    },
+  });
+};

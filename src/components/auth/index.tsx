@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { useCurrentApp } from "../context/app.context";
 import { Button, Result } from "antd";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 interface IProps {
   children: ReactNode;
@@ -15,9 +15,13 @@ const ProtectedRoute = (props: IProps) => {
       <>
         <Result
           status="404"
-          title="404"
+          title="Not Login"
           subTitle="Sorry, the page you visited does not exist."
-          extra={<Button type="primary">Back Home</Button>}
+          extra={
+            <Button type="primary">
+              <Link to="/login">Login</Link>
+            </Button>
+          }
         />
       </>
     );
