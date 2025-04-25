@@ -44,3 +44,11 @@ export const logoutAPI = () => {
     },
   });
 };
+export const getUserAPI = (current: number, pageSize: number) => {
+  const urlBackEnd = `/api/v1/user?current=${current}&pageSize=${pageSize}`;
+  return axios.get<IBackendRes<IModelPaginate<IUserTable>>>(urlBackEnd, {
+    headers: {
+      delay: 1000,
+    },
+  });
+};
