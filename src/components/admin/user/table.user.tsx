@@ -10,6 +10,7 @@ import ViewUser from "./view.user";
 import dayjs from "dayjs";
 import { FORMATE_DATE } from "@/services/helper";
 import CreateUser from "./create.user";
+import UploadUser from "./upload.user";
 
 type Tsearch = {
   fullName: string;
@@ -29,6 +30,7 @@ const TableUser = () => {
   const [isModalCreateUser, setIsModalCreateUser] = useState(false);
   const [dataView, setDataView] = useState<IUserTable>();
   const [isViewUser, setIsViewUser] = useState(false);
+  const [isOpenImport, setIsOpenImport] = useState(false);
   const columns: ProColumns<IUserTable>[] = [
     {
       dataIndex: "index",
@@ -85,6 +87,10 @@ const TableUser = () => {
   };
   return (
     <>
+      <UploadUser
+        isOpenImport={isOpenImport}
+        setIsOpenImport={setIsOpenImport}
+      />
       <CreateUser
         refreshTable={refreshTable}
         isModalCreateUser={isModalCreateUser}
@@ -155,6 +161,16 @@ const TableUser = () => {
         dateFormatter="string"
         headerTitle="Table user"
         toolBarRender={() => [
+          <Button
+            key="button"
+            icon={<PlusOutlined />}
+            onClick={() => {
+              setIsOpenImport(true);
+            }}
+            type="primary"
+          >
+            Import
+          </Button>,
           <Button
             key="button"
             icon={<PlusOutlined />}
