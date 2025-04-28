@@ -38,14 +38,33 @@ export const fetchAccountAPI = () => {
 
 export const logoutAPI = () => {
   const urlBackEnd = "/api/v1/auth/logout";
-  return axios.post<IBackendRes>(urlBackEnd, {
+  return axios.post<IBackxendRes>(urlBackEnd, {
     headers: {
       delay: 1000,
     },
   });
 };
-export const getUserAPI = (current: number, pageSize: number) => {
-  const urlBackEnd = `/api/v1/user?current=${current}&pageSize=${pageSize}`;
+export const createUserAPI = (
+  fullName: string,
+  email: string,
+  password: string,
+  phone: string
+) => {
+  const urlBackEnd = "/api/v1/user";
+  const data = {
+    fullName,
+    email,
+    password,
+    phone,
+  };
+  return axios.post<IBackendRes>(urlBackEnd, data, {
+    headers: {
+      delay: 1000,
+    },
+  });
+};
+export const getUserAPI = (query: string) => {
+  const urlBackEnd = `/api/v1/user?${query}`;
   return axios.get<IBackendRes<IModelPaginate<IUserTable>>>(urlBackEnd, {
     headers: {
       delay: 1000,
