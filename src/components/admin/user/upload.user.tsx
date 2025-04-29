@@ -1,6 +1,9 @@
 import { InboxOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
-import { message, Upload, Modal, Table, Button } from "antd";
+import { message, Upload, Modal, Table } from "antd";
+import Exceljs from "exceljs";
+import { Buffer } from "buffer";
+import { useState } from "react";
 interface IProps {
   isOpenImport: boolean;
   setIsOpenImport: (v: boolean) => void;
@@ -10,31 +13,68 @@ interface DataType {
   email: string;
   phone: string;
 }
+interface IDataImport {
+  fullName: string;
+  email: string;
+  phone: string;
+}
 const UploadUser = (props: IProps) => {
   const { isOpenImport, setIsOpenImport } = props;
   const { Dragger } = Upload;
   const { Column } = Table;
-
-  const handleOk = () => {
-    setIsOpenImport(false);
-  };
-  const handleCancel = () => {
-    setIsOpenImport(false);
-  };
+  const [dataImport, setDataImport] = useState<IDataImport[]>([]);
   const propsUploads: UploadProps = {
     name: "file",
     multiple: false,
     maxCount: 1,
-    // action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
+    //action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
     accept:
-      ".doc,.docx,.xml,.xlsx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    onChange(info) {
+      ".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+
+    customRequest({ file, onSuccess }) {
+      setTimeout(() => {
+        if (onSuccess) onSuccess("ok");
+      }, 1000);
+    },
+
+    async onChange(info) {
       const { status } = info.file;
       if (status !== "uploading") {
         console.log("file name: ", info.file, info.fileList);
       }
       if (status === "done") {
+        console.log("check filelist", info.fileList);
         message.success(`${info.file.name} file uploaded successfully.`);
+        if (info.fileList && info.fileList.length > 0) {
+          const file = info.fileList[0].originFileObj!;
+
+          //load file to buffer
+          const workbook = new Exceljs.Workbook();
+          const arrayBuffer = await file.arrayBuffer();
+          const buffer = Buffer.from(arrayBuffer);
+          const res = await workbook.xlsx.load(buffer);
+
+          console.log("check res ", res);
+
+          //load file to Json
+          const jsonData: IDataImport[] = [];
+          workbook.worksheets.forEach(function (sheet) {
+            // read first row as data keys
+            const firstRow = sheet.getRow(1);
+            if (!firstRow.cellCount) return;
+            const keys = firstRow.values as any[];
+            sheet.eachRow((row, rowNumber) => {
+              if (rowNumber == 1) return;
+              const values = row.values as any;
+              const obj: any = {};
+              for (let i = 1; i < keys.length; i++) {
+                obj[keys[i]] = values[i];
+              }
+              jsonData.push(obj);
+            });
+          });
+          setDataImport(jsonData);
+        }
       } else if (status === "error") {
         message.error(`${info.file.name} file upload failed.`);
       }
@@ -43,37 +83,25 @@ const UploadUser = (props: IProps) => {
       console.log("Dropped files", e.dataTransfer.files);
     },
   };
-
-  const data: DataType[] = [
-    {
-      fullName: "John",
-      email: "lala@gmail.com",
-      phone: "2313124",
-    },
-    {
-      fullName: "jack",
-      email: "lala1@gmail.com",
-      phone: "23131244",
-    },
-    {
-      fullName: "DeeDee",
-      email: "lala3@gmail.com",
-      phone: "231312454",
-    },
-  ];
   return (
     <>
       <Modal
         title="Upload File"
         open={isOpenImport}
-        footer={[
-          <Button key="cancel" type="default" onClick={handleCancel}>
-            Cancel
-          </Button>,
-          <Button key="submit" type="primary" onClick={handleOk}>
-            Upload
-          </Button>,
-        ]}
+        okButtonProps={{
+          disabled: dataImport.length > 0 ? false : true,
+        }}
+        maskClosable={false}
+        destroyOnClose={true}
+        okText="Import Data"
+        onOk={() => {
+          setIsOpenImport(false);
+          setDataImport([]);
+        }}
+        onCancel={() => {
+          setIsOpenImport(false);
+          setDataImport([]);
+        }}
       >
         <Dragger {...propsUploads}>
           <p className="ant-upload-drag-icon">
@@ -88,7 +116,7 @@ const UploadUser = (props: IProps) => {
           </p>
         </Dragger>
         <br />
-        <Table<DataType> dataSource={data}>
+        <Table<DataType> dataSource={dataImport}>
           <Column title="Full Name" dataIndex="fullName" key="fullName" />
           <Column title="Email" dataIndex="email" key="email" />
           <Column title="Phone" dataIndex="phone" key="phone" />

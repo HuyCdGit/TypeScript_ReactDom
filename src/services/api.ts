@@ -71,3 +71,11 @@ export const getUserAPI = (query: string) => {
     },
   });
 };
+// export const getUserAPI = (query: string) => {
+//   const urlBackEnd = `/api/v1/user?${query}`;
+//   return axios.get<IBackendRes<IModelPaginate<IUserTable>>>(urlBackEnd, {
+//     headers: {
+//       delay: 1000,
+//     },
+//   });
+// };
