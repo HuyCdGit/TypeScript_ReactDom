@@ -90,6 +90,7 @@ const TableUser = () => {
       <UploadUser
         isOpenImport={isOpenImport}
         setIsOpenImport={setIsOpenImport}
+        refreshTable={refreshTable}
       />
       <CreateUser
         refreshTable={refreshTable}
@@ -125,11 +126,13 @@ const TableUser = () => {
             }
           }
           // defaut
-          query += `&sort=-createAt`;
+
           if (sort && sort.createAt) {
             query += `&sort=${
               sort.createdAt === "ascend" ? "createAt" : "-createAt"
             }`;
+          } else {
+            query += `&sort=-createAt`;
           }
           console.log("check final querystring", query);
           const res = await getUserAPI(query);

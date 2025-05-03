@@ -56,4 +56,10 @@ declare global {
     createdAt: Date;
     updatedAt: Date;
   }
+  interface IDataImport {
+    fullName: string;
+    email: string;
+    phone: string;
+    password: "string";
+  }
 }

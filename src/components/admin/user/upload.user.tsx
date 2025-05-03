@@ -1,28 +1,49 @@
 import { InboxOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
-import { message, Upload, Modal, Table } from "antd";
+import { Upload, Modal, Table, App as AtndApp } from "antd";
 import Exceljs from "exceljs";
 import { Buffer } from "buffer";
 import { useState } from "react";
+import { bulkCreateUserAPI } from "@/services/api";
+import templateFile from "assets/template/user.xlsx?url";
 interface IProps {
   isOpenImport: boolean;
   setIsOpenImport: (v: boolean) => void;
+  refreshTable: () => void;
 }
 interface DataType {
   fullName: string;
   email: string;
   phone: string;
 }
-interface IDataImport {
-  fullName: string;
-  email: string;
-  phone: string;
-}
+
 const UploadUser = (props: IProps) => {
-  const { isOpenImport, setIsOpenImport } = props;
+  const { isOpenImport, setIsOpenImport, refreshTable } = props;
   const { Dragger } = Upload;
   const { Column } = Table;
   const [dataImport, setDataImport] = useState<IDataImport[]>([]);
+  const { message, notification } = AtndApp.useApp();
+  const handleOk = async (dataImport: IDataImport[]) => {
+    if (!dataImport) {
+      return;
+    }
+    const res = await bulkCreateUserAPI(dataImport);
+    if (res.data) {
+      notification.success({
+        message: "Create user bulk successful",
+        description: `Success: ${res.data.countSuccess} Error: ${res.data.countError}`,
+      });
+    } else {
+      notification.error({
+        message: "Create user bulk error",
+        description: `Success: ${res.data.countSuccess} Error: ${res.data.countError}`,
+      });
+    }
+  };
+  const handleCancel = () => {
+    setIsOpenImport(false);
+    setDataImport([]);
+  };
   const propsUploads: UploadProps = {
     name: "file",
     multiple: false,
@@ -95,12 +116,12 @@ const UploadUser = (props: IProps) => {
         destroyOnClose={true}
         okText="Import Data"
         onOk={() => {
-          setIsOpenImport(false);
-          setDataImport([]);
+          handleOk(dataImport);
+          refreshTable();
+          handleCancel();
         }}
         onCancel={() => {
-          setIsOpenImport(false);
-          setDataImport([]);
+          handleCancel();
         }}
       >
         <Dragger {...propsUploads}>
@@ -112,7 +133,15 @@ const UploadUser = (props: IProps) => {
           </p>
           <p className="ant-upload-hint">
             Support for a single or bulk upload. Strictly prohibited from
-            uploading company data or other banned files.
+            uploading company data or other banned files.{" "}
+            <a
+              onClick={(e) => e.stopPropagation()}
+              href={templateFile}
+              download
+              id="download"
+            >
+              Download sample file
+            </a>
           </p>
         </Dragger>
         <br />

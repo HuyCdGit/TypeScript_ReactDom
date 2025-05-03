@@ -71,11 +71,17 @@ export const getUserAPI = (query: string) => {
     },
   });
 };
-// export const getUserAPI = (query: string) => {
-//   const urlBackEnd = `/api/v1/user?${query}`;
-//   return axios.get<IBackendRes<IModelPaginate<IUserTable>>>(urlBackEnd, {
-//     headers: {
-//       delay: 1000,
-//     },
-//   });
-// };
+export const bulkCreateUserAPI = (values: IDataImport[]) => {
+  const urlBackEnd = `/api/v1/user/bulk-create`;
+  const passWord = "123456";
+  const newValues = values.map((item) => ({
+    ...item,
+    password: passWord,
+  }));
+  const data = newValues;
+  return axios.post<IBackendRes>(urlBackEnd, data, {
+    headers: {
+      delay: 1000,
+    },
+  });
+};
