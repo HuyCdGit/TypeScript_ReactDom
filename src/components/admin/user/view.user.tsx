@@ -5,8 +5,8 @@ import { FORMATE_DATE } from "@/services/helper";
 interface IProps {
   isViewUser: boolean;
   setIsViewUser: (v: boolean) => void;
-  dataView?: IUserTable;
-  setDataView: React.Dispatch<React.SetStateAction<IUserTable | undefined>>;
+  dataView: IUserTable | null;
+  setDataView: (v: IUserTable | null) => void;
 }
 const ViewUser = (props: IProps) => {
   const { isViewUser, setIsViewUser, dataView } = props;

@@ -63,9 +63,30 @@ export const createUserAPI = (
     },
   });
 };
+export const updateUserAPI = (_id: string, fullName: string, phone: string) => {
+  const urlBackEnd = "/api/v1/user";
+  const data = {
+    _id,
+    fullName,
+    phone,
+  };
+  return axios.put<IBackendRes>(urlBackEnd, data, {
+    headers: {
+      delay: 1000,
+    },
+  });
+};
 export const getUserAPI = (query: string) => {
   const urlBackEnd = `/api/v1/user?${query}`;
   return axios.get<IBackendRes<IModelPaginate<IUserTable>>>(urlBackEnd, {
+    headers: {
+      delay: 1000,
+    },
+  });
+};
+export const deleteUserAPI = (_id: string) => {
+  const urlBackEnd = `/api/v1/user/${_id}`;
+  return axios.delete<IBackendRes<IModelPaginate<IUserTable>>>(urlBackEnd, {
     headers: {
       delay: 1000,
     },

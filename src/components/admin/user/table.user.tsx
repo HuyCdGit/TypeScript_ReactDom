@@ -1,9 +1,9 @@
 import { PlusOutlined } from "@ant-design/icons";
 import type { ProColumns, ActionType } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
-import { Button } from "antd";
+import { Button, App as AntdApp } from "antd";
 import { useRef, useState } from "react";
-import { getUserAPI } from "@/services/api";
+import { deleteUserAPI, getUserAPI } from "@/services/api";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { dateRangeValidate } from "@/services/helper";
 import ViewUser from "./view.user";
@@ -11,6 +11,8 @@ import dayjs from "dayjs";
 import { FORMATE_DATE } from "@/services/helper";
 import CreateUser from "./create.user";
 import UploadUser from "./upload.user";
+import { CSVLink } from "react-csv";
+import UpdateUser from "./update.user";
 
 type Tsearch = {
   fullName: string;
@@ -21,6 +23,7 @@ type Tsearch = {
 
 const TableUser = () => {
   const actionRef = useRef<ActionType>();
+  const { notification } = AntdApp.useApp();
   const [meta, setMeta] = useState({
     current: 1,
     pageSize: 5,
@@ -28,9 +31,11 @@ const TableUser = () => {
     total: 0,
   });
   const [isModalCreateUser, setIsModalCreateUser] = useState(false);
-  const [dataView, setDataView] = useState<IUserTable>();
+  const [isModalUpdateUser, setIsModalUpdateUser] = useState(false);
+  const [dataView, setDataView] = useState<IUserTable | null>(null);
   const [isViewUser, setIsViewUser] = useState(false);
   const [isOpenImport, setIsOpenImport] = useState(false);
+  const [dataExport, setDataExport] = useState<IUserTable[]>([]);
   const columns: ProColumns<IUserTable>[] = [
     {
       dataIndex: "index",
@@ -73,10 +78,22 @@ const TableUser = () => {
     },
     {
       title: "Action",
-      render: () => (
+      render: (_, record) => (
         <div style={{ display: "Flex", gap: "20px" }}>
-          <EditOutlined style={{ cursor: "pointer", color: "orange" }} />
-          <DeleteOutlined style={{ cursor: "pointer", color: "red" }} />
+          <EditOutlined
+            style={{ cursor: "pointer", color: "orange" }}
+            onClick={() => {
+              setIsModalUpdateUser(true);
+              setDataView(record);
+            }}
+          />
+          <DeleteOutlined
+            style={{ cursor: "pointer", color: "red" }}
+            onClick={async () => {
+              await deleteUser(record._id);
+              refreshTable();
+            }}
+          />
         </div>
       ),
       hideInSearch: true,
@@ -85,8 +102,29 @@ const TableUser = () => {
   const refreshTable = () => {
     actionRef.current?.reload();
   };
+  const deleteUser = async (_id: string) => {
+    const res = await deleteUserAPI(_id);
+    if (res.data) {
+      notification.success({
+        message: "Update user Successful",
+        description: `${res.message}`,
+      });
+    } else {
+      notification.error({
+        message: "Update user Error",
+        description: `${res.message}`,
+      });
+    }
+  };
   return (
     <>
+      <UpdateUser
+        isModalUpdateUser={isModalUpdateUser}
+        setIsModalUpdateUser={setIsModalUpdateUser}
+        refreshTable={refreshTable}
+        dataView={dataView}
+        setDataView={setDataView}
+      />
       <UploadUser
         isOpenImport={isOpenImport}
         setIsOpenImport={setIsOpenImport}
@@ -139,6 +177,7 @@ const TableUser = () => {
           console.log("check res", res);
           if (res.data) {
             setMeta(res.data.meta);
+            setDataExport(res.data?.result ?? []);
           }
           return {
             data: res.data?.result,
@@ -164,6 +203,17 @@ const TableUser = () => {
         dateFormatter="string"
         headerTitle="Table user"
         toolBarRender={() => [
+          <CSVLink
+            data={dataExport}
+            filename={"my-file.csv"}
+            className="btn btn-primary"
+            target="_blank"
+          >
+            <Button key="button" icon={<PlusOutlined />} type="primary">
+              Export
+            </Button>
+          </CSVLink>,
+
           <Button
             key="button"
             icon={<PlusOutlined />}
