@@ -106,3 +106,14 @@ export const bulkCreateUserAPI = (values: IDataImport[]) => {
     },
   });
 };
+
+//Book API
+
+export const getBookAPI = (query: string) => {
+  const urlBackEnd = `/api/v1/book?${query}`;
+  return axios.get<IBackendRes>(urlBackEnd, {
+    headers: {
+      delay: 1000,
+    },
+  });
+};

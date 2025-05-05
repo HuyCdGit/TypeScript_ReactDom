@@ -56,6 +56,20 @@ declare global {
     createdAt: Date;
     updatedAt: Date;
   }
+  interface IBookTable {
+    _id: string;
+    thumbnail: string;
+    slider: [0];
+    mainText: string;
+    author: string;
+    price: number;
+    sold: number;
+    quantity: number;
+    category: string;
+    createdAt: Date;
+    updatedAt: Date;
+    __v: 0;
+  }
   interface IDataImport {
     fullName: string;
     email: string;

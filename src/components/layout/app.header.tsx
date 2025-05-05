@@ -152,7 +152,7 @@ const AppHeader = (props: any) => {
                   <Dropdown menu={{ items }} trigger={["click"]}>
                     <Space>
                       <Avatar src={urlAvatar} />
-                      {user?.fullName}
+                      {user?.fullname}
                     </Space>
                   </Dropdown>
                 )}

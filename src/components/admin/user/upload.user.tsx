@@ -48,7 +48,6 @@ const UploadUser = (props: IProps) => {
     name: "file",
     multiple: false,
     maxCount: 1,
-    //action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
     accept:
       ".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 
@@ -145,7 +144,7 @@ const UploadUser = (props: IProps) => {
           </p>
         </Dragger>
         <br />
-        <Table<DataType> dataSource={dataImport}>
+        <Table<DataType> rowKey={"id"} dataSource={dataImport}>
           <Column title="Full Name" dataIndex="fullName" key="fullName" />
           <Column title="Email" dataIndex="email" key="email" />
           <Column title="Phone" dataIndex="phone" key="phone" />

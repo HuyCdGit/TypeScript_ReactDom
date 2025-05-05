@@ -42,7 +42,6 @@ const ViewUser = (props: IProps) => {
     {
       key: "5",
       label: "Update At",
-      span: 3,
       children: dayjs(dataView?.updatedAt).format(FORMATE_DATE),
     },
     {

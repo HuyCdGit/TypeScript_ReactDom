@@ -1,7 +1,8 @@
 import { PlusOutlined } from "@ant-design/icons";
 import type { ProColumns, ActionType } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
-import { Button, App as AntdApp } from "antd";
+import { Button, App as AntdApp, Popconfirm } from "antd";
+import type { PopconfirmProps } from "antd";
 import { useRef, useState } from "react";
 import { deleteUserAPI, getUserAPI } from "@/services/api";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
@@ -87,13 +88,21 @@ const TableUser = () => {
               setDataView(record);
             }}
           />
-          <DeleteOutlined
-            style={{ cursor: "pointer", color: "red" }}
-            onClick={async () => {
+          <Popconfirm
+            title="Delete the task"
+            description="Are you sure to delete this task?"
+            onConfirm={async () => {
               await deleteUser(record._id);
-              refreshTable();
             }}
-          />
+            onCancel={cancel}
+            okText="Yes"
+            cancelText="No"
+          >
+            <DeleteOutlined
+              style={{ cursor: "pointer", color: "red" }}
+              onClick={async () => {}}
+            />
+          </Popconfirm>
         </div>
       ),
       hideInSearch: true,
@@ -115,7 +124,12 @@ const TableUser = () => {
         description: `${res.message}`,
       });
     }
+    refreshTable();
   };
+  //popconfirm
+
+  const cancel: PopconfirmProps["onCancel"] = () => {};
+
   return (
     <>
       <UpdateUser
@@ -146,14 +160,11 @@ const TableUser = () => {
         actionRef={actionRef}
         cardBordered
         request={async (params, sort) => {
-          console.log("check sort", sort); // const data = await (await fetch('https://proapi.azurewebsites.net/github/issues')).json()
           let query = "";
           if (params) {
             query += `current=${params.current}&pageSize=${params.pageSize}`;
-            console.log("check 1", query);
             if (params.email) {
               query += `&email=/${params.email}/i`;
-              console.log("check 2", query);
             }
             if (params.fullName) {
               query += `&fullName=/${params.fullName}/i`;
@@ -172,9 +183,7 @@ const TableUser = () => {
           } else {
             query += `&sort=-createAt`;
           }
-          console.log("check final querystring", query);
           const res = await getUserAPI(query);
-          console.log("check res", res);
           if (res.data) {
             setMeta(res.data.meta);
             setDataExport(res.data?.result ?? []);
