@@ -4,14 +4,16 @@ import { ActionType, ProColumns, ProTable } from "@ant-design/pro-components";
 import { Button, Popconfirm } from "antd";
 import type { PopconfirmProps } from "antd";
 import { useRef, useState } from "react";
-
 import dayjs from "dayjs";
 import { getBookAPI } from "@/services/api";
+import ViewBookDetail from "./view.book";
 type Tsearch = {
   mainText: string;
   author: string;
 };
 const TableBook = () => {
+  const [openViewBookDetail, setOpenViewBookDetail] = useState(false);
+  const [viewBook, setViewBook] = useState<IBookTable | null>(null);
   const [meta, setMeta] = useState({
     current: 1,
     pageSize: 5,
@@ -35,8 +37,8 @@ const TableBook = () => {
         return (
           <a
             onClick={() => {
-              //   setIsViewUser(true);
-              //   setDataView(record);
+              setOpenViewBookDetail(true);
+              setViewBook(record);
             }}
           >
             {record._id}
@@ -74,7 +76,7 @@ const TableBook = () => {
     },
     {
       title: "Action",
-      render: (_, record) => (
+      render: () => (
         <div style={{ display: "Flex", gap: "20px" }}>
           <EditOutlined
             style={{ cursor: "pointer", color: "orange" }}
@@ -105,6 +107,12 @@ const TableBook = () => {
   ];
   return (
     <>
+      <ViewBookDetail
+        openViewBookDetail={openViewBookDetail}
+        setOpenViewBookDetail={setOpenViewBookDetail}
+        viewBook={viewBook}
+        setViewBook={setViewBook}
+      />
       <ProTable<IBookTable, Tsearch>
         columns={columns}
         actionRef={actionRef}
