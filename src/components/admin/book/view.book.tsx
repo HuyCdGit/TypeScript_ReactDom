@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Badge,
   Descriptions,
@@ -12,10 +12,10 @@ import {
   Image,
   Divider,
 } from "antd";
+import { v1 as uuidv1 } from "uuid";
 import { FORMATE_DATE, toVND } from "@/services/helper";
 import dayjs from "dayjs";
 import { PlusOutlined } from "@ant-design/icons";
-
 interface Iprops {
   openViewBookDetail: boolean;
   setOpenViewBookDetail: (v: boolean) => void;
@@ -30,6 +30,7 @@ const ViewBookDetail = (props: Iprops) => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [size] = useState<DrawerProps["size"]>("large");
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   const onClose = () => {
     setOpenViewBookDetail(false);
@@ -85,32 +86,34 @@ const ViewBookDetail = (props: Iprops) => {
       reader.onload = () => resolve(reader.result as string);
       reader.onerror = (error) => reject(error);
     });
-  const [fileList, setFileList] = useState<UploadFile[]>([
-    {
-      uid: "-1",
-      name: "image.png",
-      status: "done",
-      url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-    },
-    {
-      uid: "-2",
-      name: "image.png",
-      status: "done",
-      url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-    },
-    {
-      uid: "-3",
-      name: "image.png",
-      status: "done",
-      url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-    },
-    {
-      uid: "-4",
-      name: "image.png",
-      status: "done",
-      url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-    },
-  ]);
+
+  useEffect(() => {
+    if (viewBook) {
+      let imgThumbNail: any = {};
+      const imgSlider: UploadFile[] = [];
+      if (viewBook.thumbnail) {
+        imgThumbNail = {
+          uid: uuidv1(),
+          name: viewBook.mainText,
+          status: "done",
+          url: `${import.meta.env.VITE_BACKEND_URL}/images/book/${
+            viewBook.thumbnail
+          }`,
+        };
+      }
+      if (viewBook.slider && viewBook.slider.length > 0) {
+        viewBook.slider.map((items) => {
+          imgSlider.push({
+            uid: uuidv1(),
+            name: items,
+            status: "done",
+            url: `${import.meta.env.VITE_BACKEND_URL}/images/book/${items}`,
+          });
+        });
+      }
+      setFileList([imgThumbNail, ...imgSlider]);
+    }
+  }, [viewBook]);
   const handlePreview = async (file: UploadFile) => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj as FileType);
@@ -140,7 +143,6 @@ const ViewBookDetail = (props: Iprops) => {
         <Descriptions title={"Book Detail"} bordered items={items} />
         <Divider orientation="left">Ảnh books</Divider>
         <Upload
-          action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
           listType="picture-card"
           showUploadList={{ showRemoveIcon: false }}
           fileList={fileList}

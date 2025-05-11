@@ -1,3 +1,6 @@
+import { Content } from "antd/es/layout/layout";
+import { url } from "inspector";
+import { post } from "node_modules/axios/index.d.cts";
 import axios from "services/axios.customize";
 export const loginAPI = (username: string, password: string) => {
   const urlBackEnd = "/api/v1/auth/login";
@@ -112,6 +115,81 @@ export const bulkCreateUserAPI = (values: IDataImport[]) => {
 export const getBookAPI = (query: string) => {
   const urlBackEnd = `/api/v1/book?${query}`;
   return axios.get<IBackendRes>(urlBackEnd, {
+    headers: {
+      delay: 1000,
+    },
+  });
+};
+export const getCategoryAPI = () => {
+  const urlBackEnd = "/api/v1/database/category";
+  return axios.get<IBackendRes<string[]>>(urlBackEnd, {
+    headers: {
+      delay: 1000,
+    },
+  });
+};
+
+export const callUploadImg = (fileImg: any, folder: string) => {
+  const bodyFormData = new FormData();
+  bodyFormData.append("fileImg", fileImg);
+  return axios<IBackendRes<{ fileUploaded: string }>>({
+    method: "post",
+    url: "/api/v1/file/upload",
+    data: bodyFormData,
+    headers: {
+      Content: "multipart/form-data",
+      "upload-type": folder,
+    },
+  });
+};
+
+export const createBookAPI = (
+  thumbnail: string,
+  slider: string[],
+  mainText: string,
+  author: string,
+  price: string,
+  quantity: string,
+  category: string
+) => {
+  const urlBackEnd = "/api/v1/book";
+
+  return axios.post<IBackendRes>(urlBackEnd, {
+    thumbnail,
+    slider,
+    mainText,
+    author,
+    price,
+    quantity,
+    category,
+  });
+};
+
+export const updateBookAPI = (
+  id: string,
+  thumbnail: string,
+  slider: string[],
+  mainText: string,
+  author: string,
+  price: string,
+  quantity: string,
+  category: string
+) => {
+  const urlBackEnd = `/api/v1/book/${id}`;
+  return axios.put<IBackendRes>(urlBackEnd, {
+    thumbnail,
+    slider,
+    mainText,
+    author,
+    price,
+    quantity,
+    category,
+  });
+};
+
+export const deleteBookAPI = (id: string) => {
+  const urlBackEnd = `/api/v1/book/${id}`;
+  return axios.delete<IBackendRes<IModelPaginate<IBookTable>>>(urlBackEnd, {
     headers: {
       delay: 1000,
     },

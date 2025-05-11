@@ -59,7 +59,7 @@ declare global {
   interface IBookTable {
     _id: string;
     thumbnail: string;
-    slider: [0];
+    slider: [];
     mainText: string;
     author: string;
     price: number;
@@ -76,4 +76,6 @@ declare global {
     phone: string;
     password: "string";
   }
+
+  
 }

@@ -1,18 +1,25 @@
 import { FORMATE_DATE, toVND } from "@/services/helper";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { ActionType, ProColumns, ProTable } from "@ant-design/pro-components";
-import { Button, Popconfirm } from "antd";
+import { Button, Popconfirm, App as AntApp } from "antd";
 import type { PopconfirmProps } from "antd";
 import { useRef, useState } from "react";
 import dayjs from "dayjs";
-import { getBookAPI } from "@/services/api";
+import { deleteBookAPI, getBookAPI } from "@/services/api";
 import ViewBookDetail from "./view.book";
+import CreateBook from "./create.book";
+import UpdateBook from "./update.book";
+import { CSVLink } from "react-csv";
 type Tsearch = {
   mainText: string;
   author: string;
 };
 const TableBook = () => {
+  const { notification } = AntApp.useApp();
   const [openViewBookDetail, setOpenViewBookDetail] = useState(false);
+  const [isCreateBookOpen, setIsCreateBookOpen] = useState(false);
+  const [isUpdateBookOpen, setIsUpdateBookOpen] = useState(false);
+  const [dataExport, setDataExport] = useState<IBookTable[]>([]);
   const [viewBook, setViewBook] = useState<IBookTable | null>(null);
   const [meta, setMeta] = useState({
     current: 1,
@@ -23,6 +30,9 @@ const TableBook = () => {
   const actionRef = useRef<ActionType>();
   const cancel: PopconfirmProps["onCancel"] = () => {};
 
+  const refreshTable = () => {
+    actionRef.current?.reload();
+  };
   const columns: ProColumns<IBookTable>[] = [
     {
       dataIndex: "index",
@@ -76,37 +86,62 @@ const TableBook = () => {
     },
     {
       title: "Action",
-      render: () => (
+      render: (_, record) => (
         <div style={{ display: "Flex", gap: "20px" }}>
           <EditOutlined
             style={{ cursor: "pointer", color: "orange" }}
             onClick={() => {
-              //   setIsModalUpdateUser(true);
-              //   setDataView(record);
+              setIsUpdateBookOpen(true);
+              setViewBook(record);
             }}
           />
           <Popconfirm
             title="Delete the task"
             description="Are you sure to delete this task?"
             onConfirm={async () => {
-              //   await deleteUser(record._id);
+              await deleteBook(record._id);
             }}
             onCancel={cancel}
             okText="Yes"
             cancelText="No"
           >
-            <DeleteOutlined
-              style={{ cursor: "pointer", color: "red" }}
-              onClick={async () => {}}
-            />
+            <DeleteOutlined style={{ cursor: "pointer", color: "red" }} />
           </Popconfirm>
         </div>
       ),
       hideInSearch: true,
     },
   ];
+  //delete API
+  const deleteBook = async (id: string) => {
+    const res = await deleteBookAPI(id);
+    if (res.data) {
+      notification.success({
+        message: "Delete book success ",
+        description: res.message,
+      });
+    } else {
+      notification.error({
+        message: "Delete book error ",
+        description: res.message,
+      });
+    }
+    refreshTable();
+  };
   return (
     <>
+      <UpdateBook
+        isUpdateBookOpen={isUpdateBookOpen}
+        setIsUpdateBookOpen={setIsUpdateBookOpen}
+        viewBook={viewBook}
+        setViewBook={setViewBook}
+        refreshTable={refreshTable}
+      />
+      <CreateBook
+        isCreateBookOpen={isCreateBookOpen}
+        setIsCreateBookOpen={setIsCreateBookOpen}
+        refreshTable={refreshTable}
+      />
       <ViewBookDetail
         openViewBookDetail={openViewBookDetail}
         setOpenViewBookDetail={setOpenViewBookDetail}
@@ -144,7 +179,7 @@ const TableBook = () => {
           const res = await getBookAPI(query);
           if (res.data) {
             setMeta(res.data.meta);
-            // setDataExport(res.data?.result ?? []);
+            setDataExport(res.data?.result ?? []);
           }
           return {
             data: res.data?.result,
@@ -170,32 +205,31 @@ const TableBook = () => {
         dateFormatter="string"
         headerTitle="Table user"
         toolBarRender={() => [
-          //   <CSVLink
-          //     data={dataExport}
-          //     filename={"my-file.csv"}
-          //     className="btn btn-primary"
-          //     target="_blank"
-          //   >
-          //     <Button key="button" icon={<PlusOutlined />} type="primary">
-          //       Export
-          //     </Button>
-          //   </CSVLink>,
-
-          <Button
-            key="button"
-            icon={<PlusOutlined />}
-            onClick={() => {
-              //   setIsOpenImport(true);
-            }}
-            type="primary"
+          <CSVLink
+            data={dataExport}
+            filename={"my-file.csv"}
+            className="btn btn-primary"
+            target="_blank"
           >
-            Import
-          </Button>,
+            <Button key="button" icon={<PlusOutlined />} type="primary">
+              Export
+            </Button>
+          </CSVLink>,
+          // <Button
+          //   key="button"
+          //   icon={<PlusOutlined />}
+          //   onClick={() => {
+          //     //   setIsOpenImport(true);
+          //   }}
+          //   type="primary"
+          // >
+          //   Import
+          // </Button>,
           <Button
             key="button"
             icon={<PlusOutlined />}
             onClick={() => {
-              //   setIsModalCreateUser(true);
+              setIsCreateBookOpen(true);
             }}
             type="primary"
           >

@@ -98,10 +98,7 @@ const TableUser = () => {
             okText="Yes"
             cancelText="No"
           >
-            <DeleteOutlined
-              style={{ cursor: "pointer", color: "red" }}
-              onClick={async () => {}}
-            />
+            <DeleteOutlined style={{ cursor: "pointer", color: "red" }} />
           </Popconfirm>
         </div>
       ),
