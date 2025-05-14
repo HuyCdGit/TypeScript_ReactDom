@@ -23,6 +23,7 @@ const CreateUser = (props: Iprops) => {
     refreshTable();
     setIsModalCreateUser(false);
   };
+
   const onFinish: FormProps<TFieldType>["onFinish"] = async (values) => {
     const res = await createUserAPI(
       values.fullName,

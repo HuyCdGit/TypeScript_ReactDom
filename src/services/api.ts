@@ -114,7 +114,7 @@ export const bulkCreateUserAPI = (values: IDataImport[]) => {
 
 export const getBookAPI = (query: string) => {
   const urlBackEnd = `/api/v1/book?${query}`;
-  return axios.get<IBackendRes>(urlBackEnd, {
+  return axios.get<IBackendRes<IModelPaginate<IBookTable>>>(urlBackEnd, {
     headers: {
       delay: 1000,
     },
