@@ -17,6 +17,8 @@ import {
 } from "antd";
 import { useEffect, useState } from "react";
 import { getBookAPI, getCategoryAPI } from "@/services/api";
+import { useNavigate } from "react-router-dom";
+
 type FieldType = {
   range: {
     from: number;
@@ -41,7 +43,7 @@ const HomePage = () => {
       label: string;
     }[]
   >([]);
-
+  const navigate = useNavigate();
   const fetchBook = async () => {
     setIsLoading(true);
     let query = "";
@@ -272,8 +274,12 @@ const HomePage = () => {
           </Row>
           <Spin tip="Loading..." spinning={isLoading} size="small">
             <Row className="customize-row">
-              {viewBook.map((items) => (
-                <div className="column">
+              {viewBook.map((items, index) => (
+                <div
+                  className="column"
+                  onClick={() => navigate(`book/${items._id}`)}
+                  key={`book-${index}`}
+                >
                   <div className="wrapper">
                     <div className="thumbnail">
                       <img

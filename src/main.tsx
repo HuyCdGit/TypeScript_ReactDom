@@ -93,6 +93,10 @@ const router = createBrowserRouter([
     ],
   },
   {
+    path: "/book/:id",
+    element: <BookPage />,
+  },
+  {
     path: "/login",
     element: <LoginPage />,
   },

@@ -195,3 +195,12 @@ export const deleteBookAPI = (id: string) => {
     },
   });
 };
+
+export const fetchBookById = (id: string) => {
+  const urlBackEnd = `/api/v1/book/${id}`;
+  return axios.get<IBackendRes<IBookTable>>(urlBackEnd, {
+    headers: {
+      delay: 1000,
+    },
+  });
+};
