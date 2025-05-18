@@ -55,7 +55,7 @@ type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
 const CreateBook = (props: Iprops) => {
   const { isCreateBookOpen, setIsCreateBookOpen, refreshTable } = props;
-  const { message, notification } = AntdApp.useApp();
+  const { message } = AntdApp.useApp();
   const [form] = Form.useForm();
 
   const [listCategory, setListCategory] = useState<

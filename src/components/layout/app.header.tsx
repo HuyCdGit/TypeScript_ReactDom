@@ -13,7 +13,7 @@ import { logoutAPI } from "@/services/api";
 const AppHeader = (props: any) => {
   const [openDrawer, setOpenDrawer] = useState(false);
 
-  const { isAuthenticated, user, setUser, setIsAuthenticated } =
+  const { isAuthenticated, user, setUser, setIsAuthenticated, carts } =
     useCurrentApp();
 
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ const AppHeader = (props: any) => {
     }
   };
 
-  let items = [
+  const items = [
     {
       label: (
         <label style={{ cursor: "pointer" }} onClick={() => alert("me")}>
@@ -134,7 +134,7 @@ const AppHeader = (props: any) => {
                 >
                   <Badge
                     // count={carts?.length ?? 0}
-                    count={10}
+                    count={carts.length ?? 0}
                     size={"small"}
                     showZero
                   >
@@ -152,7 +152,7 @@ const AppHeader = (props: any) => {
                   <Dropdown menu={{ items }} trigger={["click"]}>
                     <Space>
                       <Avatar src={urlAvatar} />
-                      {user?.fullname}
+                      {user?.fullName}
                     </Space>
                   </Dropdown>
                 )}

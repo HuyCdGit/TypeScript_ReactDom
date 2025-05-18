@@ -37,7 +37,7 @@ declare global {
   interface IUser {
     email: string;
     phone: string;
-    fullname: string;
+    fullName: string;
     role: string;
     avatar: string;
     id: string;
@@ -76,6 +76,9 @@ declare global {
     phone: string;
     password: "string";
   }
-
-  
+  interface ICart {
+    id: string;
+    quantity: number;
+    detail: IBookTable;
+  }
 }

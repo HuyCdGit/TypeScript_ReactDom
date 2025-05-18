@@ -1,4 +1,8 @@
-import { FilterTwoTone, ReloadOutlined } from "@ant-design/icons";
+import {
+  FilterOutlined,
+  FilterTwoTone,
+  ReloadOutlined,
+} from "@ant-design/icons";
 import "styles/home.scss";
 import {
   Button,
@@ -7,7 +11,6 @@ import {
   Divider,
   Form,
   FormProps,
-  GetProp,
   InputNumber,
   Pagination,
   Rate,
@@ -18,6 +21,7 @@ import {
 import { useEffect, useState } from "react";
 import { getBookAPI, getCategoryAPI } from "@/services/api";
 import { useNavigate } from "react-router-dom";
+import MobileFilter from "./book/mobileFilter.book";
 
 type FieldType = {
   range: {
@@ -37,6 +41,7 @@ const HomePage = () => {
   const [sortQuery, setSortQuery] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [viewBook, setViewBook] = useState<IBookTable[]>([]);
+  const [isOpenMobileFilter, setIsOpenMobileFilter] = useState<boolean>(false);
   const [fetchCategory, setFetchCategory] = useState<
     {
       value: string;
@@ -100,12 +105,6 @@ const HomePage = () => {
       setFilter(f);
     }
   };
-
-  const onChange: GetProp<typeof Checkbox.Group, "onChange"> = (
-    checkedValues
-  ) => {
-    console.log("checked = ", checkedValues);
-  };
   useEffect(() => {
     fetchBook();
   }, [current, pageSize, sortQuery, filter]);
@@ -149,7 +148,7 @@ const HomePage = () => {
       style={{ maxWidth: 1440, margin: "0 auto" }}
     >
       <Row gutter={[20, 20]}>
-        <Col md={4} sm={0} xs={0} style={{ border: "1px solid green" }}>
+        <Col md={4} sm={0} xs={0}>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <span>
               <FilterTwoTone /> Bộ lọc tìm kiếm
@@ -163,12 +162,12 @@ const HomePage = () => {
               handleChangeFilter(changedValues)
             }
           >
-            <Form.Item<FieldType>
+            <Form.Item
               name="category"
               label="Danh mục sản phẩm"
               labelCol={{ span: 24 }}
             >
-              <Checkbox.Group style={{ width: "100%" }} onChange={onChange}>
+              <Checkbox.Group style={{ width: "100%" }}>
                 <Row>
                   {fetchCategory.map((items) => (
                     <Col span={24}>
@@ -187,7 +186,7 @@ const HomePage = () => {
                   marginBottom: 20,
                 }}
               >
-                <Form.Item<FieldType> name={["range", "from"]}>
+                <Form.Item name={["range", "from"]}>
                   <InputNumber
                     name="from"
                     min={0}
@@ -198,7 +197,7 @@ const HomePage = () => {
                   />
                 </Form.Item>
                 <span>-</span>
-                <Form.Item<FieldType> name={["range", "to"]}>
+                <Form.Item name={["range", "to"]}>
                   <InputNumber
                     name="to"
                     min={0}
@@ -264,14 +263,24 @@ const HomePage = () => {
             </Form.Item>
           </Form>
         </Col>
-        <Col md={20} sm={24} xs={24} style={{ border: "1px solid red" }}>
+        <Col md={20} sm={24} xs={24}>
           <Row>
             <Tabs
               defaultActiveKey="1"
               items={items}
               onChange={(value) => handleTabs(value)}
             />
+            <Col md={0} xs={24}>
+              <Row>
+                <div style={{ marginTop: 30 }}></div>
+                <span style={{ fontWeight: 500, cursor: "pointer" }}>
+                  <FilterOutlined onClick={() => setIsOpenMobileFilter(true)} />
+                  Lọc
+                </span>
+              </Row>
+            </Col>
           </Row>
+
           <Spin tip="Loading..." spinning={isLoading} size="small">
             <Row className="customize-row">
               {viewBook.map((items, index) => (
@@ -319,6 +328,13 @@ const HomePage = () => {
               onChange={(p, s) => handlePageChange({ current: p, pageSize: s })}
             />
           </Row>
+          <MobileFilter
+            handleChangeFilter={handleChangeFilter}
+            onFinish={onFinish}
+            isOpenMobileFilter={isOpenMobileFilter}
+            setIsOpenMobileFilter={setIsOpenMobileFilter}
+            fetchCategory={fetchCategory}
+          />
         </Col>
       </Row>
     </div>

@@ -29,7 +29,7 @@ const router = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        path: "/book",
+        path: "/book/:id",
         element: <BookPage />,
       },
       {
@@ -91,10 +91,6 @@ const router = createBrowserRouter([
         ),
       },
     ],
-  },
-  {
-    path: "/book/:id",
-    element: <BookPage />,
   },
   {
     path: "/login",
