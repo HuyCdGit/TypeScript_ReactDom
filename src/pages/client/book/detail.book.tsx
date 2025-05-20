@@ -113,20 +113,20 @@ const BookDetail = (props: IProps) => {
         const isExistIndex = carts.findIndex((c) => c.id === viewBook._id);
         if (isExistIndex > -1) {
           carts[isExistIndex].quantity = viewBook.quantity + currentQuantity;
-          localStorage.setItem("carts", JSON.stringify(carts));
         } else {
           carts.push({
             id: viewBook._id,
             quantity: viewBook?.quantity,
             detail: viewBook,
           });
-          localStorage.setItem("carts", JSON.stringify(carts));
+
           notification.success({
             message: "Update Successed",
             description: `lưu localStorage thành công`,
           });
         }
         setCarts(carts);
+        localStorage.setItem("carts", JSON.stringify(carts));
       }
     }
   };
