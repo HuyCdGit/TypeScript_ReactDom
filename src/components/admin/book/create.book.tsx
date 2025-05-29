@@ -112,7 +112,6 @@ const CreateBook = (props: Iprops) => {
     const res = await callUploadImg(file, "book");
 
     if (res && res.data) {
-      console.log("check res handleUploadFile", res);
       const uploadedFile: UploadFile = {
         uid: file.uid,
         name: res.data.fileUploaded,

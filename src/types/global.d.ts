@@ -70,6 +70,27 @@ declare global {
     updatedAt: Date;
     __v: 0;
   }
+  interface IHistory {
+    _id: string;
+    name: string;
+    type: string;
+    email: string;
+    phone: string;
+    userId: string;
+    detail: [
+      {
+        bookName: string;
+        quantity: number;
+        _id: string;
+      }
+    ];
+    totalPrice: number;
+    paymentStatus: string;
+    paymentRef: string;
+    createdAt: string;
+    updatedAt: string;
+    __v: 0;
+  }
   interface IDataImport {
     fullName: string;
     email: string;
