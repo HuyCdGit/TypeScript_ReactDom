@@ -23,7 +23,7 @@ declare global {
     user: {
       email: string;
       phone: string;
-      fullname: string;
+      fullName: string;
       role: string;
       avatar: string;
       id: string;
@@ -73,6 +73,7 @@ declare global {
   interface IHistory {
     _id: string;
     name: string;
+    address: string;
     type: string;
     email: string;
     phone: string;
@@ -95,11 +96,19 @@ declare global {
     fullName: string;
     email: string;
     phone: string;
-    password: "string";
+    password: string;
   }
   interface ICart {
     id: string;
     quantity: number;
     detail: IBookTable;
+  }
+
+  interface IOrderTable extends IHistory {}
+
+  interface IDashBoard {
+    countOrder: number;
+    countUser: number;
+    countBook: number;
   }
 }

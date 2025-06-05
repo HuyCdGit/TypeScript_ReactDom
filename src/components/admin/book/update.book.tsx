@@ -1,9 +1,4 @@
-import {
-  callUploadImg,
-  createBookAPI,
-  getCategoryAPI,
-  updateBookAPI,
-} from "@/services/api";
+import { callUploadImg, getCategoryAPI, updateBookAPI } from "@/services/api";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { UploadRequestOption as RcCustomRequestOptions } from "rc-upload/lib/interface";
 import { v1 as uuidv1 } from "uuid";
@@ -69,7 +64,7 @@ const UpdateBook = (props: Iprops) => {
     viewBook,
     setViewBook,
   } = props;
-  const { message, notification } = AntdApp.useApp();
+  const { message } = AntdApp.useApp();
   const [form] = Form.useForm();
 
   const [listCategory, setListCategory] = useState<
@@ -153,12 +148,6 @@ const UpdateBook = (props: Iprops) => {
   };
 
   const onFinish: FormProps<TcreateFormBook>["onFinish"] = async (values) => {
-    console.log(
-      "check values ",
-      viewBook?._id,
-      fileListThumbnail,
-      fileListSlider
-    );
     const thumbnail = fileListThumbnail?.[0]?.name ?? [];
     const slider = fileListSlider?.map((items) => items.name) ?? [];
     console.log("values.slider", values.slider);

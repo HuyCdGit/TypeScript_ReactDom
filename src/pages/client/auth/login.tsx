@@ -1,29 +1,16 @@
 import { useCurrentApp } from "@/components/context/app.context";
 import { loginAPI } from "@/services/api";
-import { App, Button, Form, Input } from "antd";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-
+import { App, Button, Divider, Form, Input } from "antd";
+import { Link, useNavigate } from "react-router-dom";
+import "./login.scss";
 type FieldType = {
   username: string;
   password: string;
 };
-type LayoutType = Parameters<typeof Form>[0]["layout"];
 
 const LoginPage = () => {
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 6 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 14 },
-    },
-  };
   const { setIsAuthenticated, setUser } = useCurrentApp();
   const navigate = useNavigate();
-  const [formLayout, setFormLayout] = useState<LayoutType>("vertical");
   const [form] = Form.useForm();
   const { notification } = App.useApp();
   const onFinish = async (v: FieldType) => {
@@ -42,45 +29,59 @@ const LoginPage = () => {
       notification.error({ message: "Failed", description: `${res.message}` });
     }
   };
-  const onFinishFailed = () => {
-    notification.warning({ message: "warning" });
-  };
-  const onFormLayoutChange = ({ layout }: { layout: LayoutType }) => {
-    setFormLayout(layout);
-  };
   return (
-    <Form
-      {...formItemLayout}
-      layout={formLayout}
-      form={form}
-      initialValues={{ layout: formLayout }}
-      onValuesChange={onFormLayoutChange}
-      onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
-      autoComplete="off"
-    >
-      <Form.Item<FieldType>
-        hasFeedback
-        label="Email"
-        name="username"
-        rules={[{ required: true, message: "Please input your Email!" }]}
-      >
-        <Input placeholder="input your Email" />
-      </Form.Item>
-      <Form.Item<FieldType>
-        hasFeedback
-        label="Password"
-        name="password"
-        rules={[{ required: true, message: "Please input your Password!" }]}
-      >
-        <Input.Password placeholder="input your Password" />
-      </Form.Item>
-      <Form.Item>
-        <Button type="primary" htmlType="submit">
-          Submit
-        </Button>
-      </Form.Item>
-    </Form>
+    <div className="login-page">
+      <main className="main">
+        <div className="container">
+          <section className="wrapper">
+            <div className="heading">
+              <h2 className="text text-large">Đăng Nhập</h2>
+              <Divider />
+            </div>
+            <Form
+              layout="vertical"
+              form={form}
+              onFinish={onFinish}
+              autoComplete="off"
+            >
+              <Form.Item<FieldType>
+                hasFeedback
+                label="Email"
+                name="username"
+                rules={[
+                  { required: true, message: "Please input your Email!" },
+                ]}
+              >
+                <Input placeholder="input your Email" />
+              </Form.Item>
+              <Form.Item<FieldType>
+                hasFeedback
+                label="Password"
+                name="password"
+                rules={[
+                  { required: true, message: "Please input your Password!" },
+                ]}
+              >
+                <Input.Password placeholder="input your Password" />
+              </Form.Item>
+              <Form.Item>
+                <Button type="primary" htmlType="submit">
+                  Đăng nhập
+                </Button>
+              </Form.Item>
+              <Divider>Or</Divider>
+              <p className="text text-normal" style={{ textAlign: "center" }}>
+                Chưa có tài khoản ?
+                <span>
+                  <Link to="/register"> Đăng Ký </Link>
+                </span>
+              </p>
+              <br />
+            </Form>
+          </section>
+        </div>
+      </main>
+    </div>
   );
 };
 export default LoginPage;

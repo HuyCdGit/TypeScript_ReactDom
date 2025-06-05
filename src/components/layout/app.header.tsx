@@ -9,12 +9,18 @@ import "./app.header.scss";
 import { Link } from "react-router-dom";
 import { useCurrentApp } from "components/context/app.context";
 import { logoutAPI } from "@/services/api";
-
+import { isMobile } from "react-device-detect";
 const AppHeader = (props: any) => {
   const [openDrawer, setOpenDrawer] = useState(false);
 
-  const { isAuthenticated, user, setUser, setIsAuthenticated, carts } =
-    useCurrentApp();
+  const {
+    isAuthenticated,
+    user,
+    setUser,
+    setIsAuthenticated,
+    carts,
+    setCarts,
+  } = useCurrentApp();
 
   const navigate = useNavigate();
 
@@ -23,16 +29,18 @@ const AppHeader = (props: any) => {
     const res = await logoutAPI();
     if (res.data) {
       setUser(null);
+      setCarts([]);
       setIsAuthenticated(false);
       localStorage.removeItem("access_token");
+      localStorage.removeItem("carts");
     }
   };
 
   const items = [
     {
       label: (
-        <label style={{ cursor: "pointer" }} onClick={() => alert("me")}>
-          Quản lý tài khoản
+        <label style={{ cursor: "pointer" }}>
+          <Link to="/account">Quản lý tài khoản</Link>
         </label>
       ),
       key: "account",
@@ -121,31 +129,37 @@ const AppHeader = (props: any) => {
                 className="input-search"
                 type={"text"}
                 placeholder="Bạn tìm gì hôm nay"
-                // value={props.searchTerm}
-                // onChange={(e) => props.setSearchTerm(e.target.value)}
+                value={props.searchTerm}
+                onChange={(e) => props.setSearchTerm(e.target.value)}
               />
             </div>
           </div>
           <nav className="page-header__bottom">
             <ul id="navigation" className="navigation">
               <li className="navigation__item">
-                <Popover
-                  className="popover-carts"
-                  placement="topRight"
-                  rootClassName="popover-carts"
-                  title={"Sản phẩm mới thêm"}
-                  content={contentPopover}
-                  arrow={true}
-                >
+                {!isMobile ? (
+                  <Popover
+                    className="popover-carts"
+                    placement="topRight"
+                    rootClassName="popover-carts"
+                    title={"Sản phẩm mới thêm"}
+                    content={contentPopover}
+                    arrow={true}
+                  >
+                    <Badge count={carts?.length ?? 0} size={"small"} showZero>
+                      <FiShoppingCart className="icon-cart" />
+                    </Badge>
+                  </Popover>
+                ) : (
                   <Badge
-                    // count={carts?.length ?? 0}
-                    count={carts.length ?? 0}
+                    count={carts?.length ?? 0}
                     size={"small"}
                     showZero
+                    onClick={() => navigate("/order")}
                   >
                     <FiShoppingCart className="icon-cart" />
                   </Badge>
-                </Popover>
+                )}
               </li>
               <li className="navigation__item mobile">
                 <Divider type="vertical" />

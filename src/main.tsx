@@ -19,6 +19,7 @@ import LayoutAdmin from "components/layout/layout.admin";
 import enUS from "antd/locale/en_US";
 import OrderPage from "./pages/client/order";
 import HistoryOrder from "./pages/client/order/history.order";
+import ManageAccount from "./pages/client/account";
 // import viVN from "antd/locale/vi_VN";
 
 const router = createBrowserRouter([
@@ -36,10 +37,25 @@ const router = createBrowserRouter([
       },
       {
         path: "/history",
-
         element: (
           <ProtectedRoute>
             <HistoryOrder />,
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/account",
+        element: (
+          <ProtectedRoute>
+            <ManageAccount />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/dashboar",
+        element: (
+          <ProtectedRoute>
+            <DashBoardPage />
           </ProtectedRoute>
         ),
       },

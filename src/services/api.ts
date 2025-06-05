@@ -230,3 +230,40 @@ export const fetchHistory = () => {
     },
   });
 };
+
+export const updateInfo = (
+  fullName: string,
+  phone: string,
+  avatar: string,
+  _id: string
+) => {
+  const urlBackEnd = `/api/v1/user`;
+  return axios.put<IBackendRes>(
+    urlBackEnd,
+    { fullName, phone, avatar, _id },
+    {
+      headers: {
+        delay: 3000,
+      },
+    }
+  );
+};
+
+export const changePassword = (
+  email: string,
+  oldpass: string,
+  newpass: string
+) => {
+  const urlBackEnd = `/api/v1/user/change-password`;
+  return axios.post<IBackendRes>(urlBackEnd, { email, oldpass, newpass });
+};
+
+export const fetchOrder = (query: string) => {
+  const urlBackEnd = `/api/v1/order?${query}`;
+  return axios.get<IBackendRes<IModelPaginate<IOrderTable>>>(urlBackEnd);
+};
+
+export const fetchDashBoard = () => {
+  const urlBackEnd = `/api/v1/database/dashboard`;
+  return axios.get<IBackendRes<IDashBoard>>(urlBackEnd);
+};

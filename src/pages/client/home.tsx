@@ -20,7 +20,7 @@ import {
 } from "antd";
 import { useEffect, useState } from "react";
 import { getBookAPI, getCategoryAPI } from "@/services/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import MobileFilter from "./book/mobileFilter.book";
 
 type FieldType = {
@@ -34,7 +34,7 @@ type FieldType = {
 const HomePage = () => {
   const [form] = Form.useForm();
   const [current, setCurrent] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
   const [pages, setPages] = useState(5);
   const [total, setTotal] = useState(10);
   const [filter, setFilter] = useState<string | null>(null);
@@ -48,6 +48,8 @@ const HomePage = () => {
       label: string;
     }[]
   >([]);
+  const [searchTerm] = useOutletContext<string>();
+
   const navigate = useNavigate();
   const fetchBook = async () => {
     setIsLoading(true);
@@ -59,6 +61,9 @@ const HomePage = () => {
     }
     if (filter) {
       query += `${filter}`;
+    }
+    if (searchTerm) {
+      query += `&mainText=/${searchTerm}/i`;
     }
     const res = await getBookAPI(query);
     if (res.data) {
@@ -107,7 +112,7 @@ const HomePage = () => {
   };
   useEffect(() => {
     fetchBook();
-  }, [current, pageSize, sortQuery, filter]);
+  }, [current, pageSize, sortQuery, filter, searchTerm]);
   useEffect(() => {
     const func = async () => {
       const res = await getCategoryAPI();

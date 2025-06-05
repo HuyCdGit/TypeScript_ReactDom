@@ -1,8 +1,9 @@
-import { Button, Steps, App as AntdApp, Result } from "antd";
+import { Button, Steps, App as AntdApp, Result, Breadcrumb } from "antd";
 import OrderIndex from "./order/index.order";
 import { useState } from "react";
 import PaymentOrder from "./order/payment.order";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { isMobile } from "react-device-detect";
 
 const OrderPage = () => {
   const { message } = AntdApp.useApp();
@@ -10,21 +11,6 @@ const OrderPage = () => {
   const navigate = useNavigate();
 
   const description = "This is a description.";
-  // const steps = [
-  //   {
-  //     title: "First",
-  //   },
-  //   {
-  //     title: "Second",
-  //   },
-  //   {
-  //     title: "Last",
-  //   },
-  // ];
-  // const next = () => {
-  //   setCurrentStep(currentStep + 1);
-  // };
-
   const prev = () => {
     setCurrentStep(currentStep - 1);
   };
@@ -34,26 +20,39 @@ const OrderPage = () => {
         className="order-container"
         style={{ maxWidth: 1440, margin: "0 auto" }}
       >
-        <div className="order-steps">
-          <Steps
-            current={currentStep}
-            items={[
-              {
-                title: "Finished",
-                description,
-              },
-              {
-                title: "In Progress",
-                description,
-              },
-              {
-                title: "Waiting",
-                description,
-              },
-            ]}
-          />
-        </div>
+        <Breadcrumb
+          separator=">"
+          items={[
+            {
+              title: <Link to={"/"}>Trang Chủ</Link>,
+            },
 
+            {
+              title: "Chi Tiết Giỏ Hàng",
+            },
+          ]}
+        />
+        {!isMobile && (
+          <div className="order-steps" style={{ marginTop: 10 }}>
+            <Steps
+              current={currentStep}
+              items={[
+                {
+                  title: "Finished",
+                  description,
+                },
+                {
+                  title: "In Progress",
+                  description,
+                },
+                {
+                  title: "Waiting",
+                  description,
+                },
+              ]}
+            />
+          </div>
+        )}
         <div style={{ marginTop: 24 }}>
           {currentStep === 0 && (
             <OrderIndex

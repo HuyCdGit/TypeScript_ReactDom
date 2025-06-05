@@ -16,6 +16,7 @@ import {
 import { useForm } from "antd/es/form/Form";
 import TextArea from "antd/es/input/TextArea";
 import { useEffect, useState } from "react";
+import { isMobile } from "react-device-detect";
 interface Iprops {
   currentStep: number;
   setCurrentStep: (v: number) => void;
@@ -121,36 +122,74 @@ const PaymentOrder = (props: Iprops) => {
             {carts?.map((item, index) => {
               const currentBookPrice = item?.detail?.price ?? 0;
               return (
-                <div className="order-book" key={`index-${index}`}>
-                  <div className="book-content">
-                    <img
-                      src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${
-                        item?.detail?.thumbnail
-                      }`}
-                    />
-                    <div className="title">{item?.detail?.mainText}</div>
-                    <div className="price">
-                      {new Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      }).format(currentBookPrice)}
-                    </div>
-                  </div>
-                  <div className="action">
-                    <div className="quantity">Số lượng: {item.quantity}</div>
-                    <div className="sum">
-                      Tổng:{" "}
-                      {new Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      }).format(currentBookPrice * (item?.quantity ?? 0))}
-                    </div>
-                    <DeleteTwoTone
-                      style={{ cursor: "pointer" }}
-                      onClick={() => handleRemoveBook(item.id)}
-                      twoToneColor="#eb2f96"
-                    />
-                  </div>
+                <div
+                  className="order-book"
+                  key={`index-${index}`}
+                  style={isMobile ? { flexDirection: "column" } : {}}
+                >
+                  {!isMobile ? (
+                    <>
+                      <div className="book-content">
+                        <img
+                          src={`${
+                            import.meta.env.VITE_BACKEND_URL
+                          }/images/book/${item?.detail?.thumbnail}`}
+                        />
+                        <div className="title">{item?.detail?.mainText}</div>
+                        <div className="price">
+                          {new Intl.NumberFormat("vi-VN", {
+                            style: "currency",
+                            currency: "VND",
+                          }).format(currentBookPrice)}
+                        </div>
+                      </div>
+                      <div className="action">
+                        <div className="quantity">
+                          Số lượng: {item.quantity}
+                        </div>
+                        <div className="sum">
+                          Tổng:{" "}
+                          {new Intl.NumberFormat("vi-VN", {
+                            style: "currency",
+                            currency: "VND",
+                          }).format(currentBookPrice * (item?.quantity ?? 0))}
+                        </div>
+                        <DeleteTwoTone
+                          style={{ cursor: "pointer" }}
+                          onClick={() => handleRemoveBook(item.id)}
+                          twoToneColor="#eb2f96"
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div>{item?.detail?.mainText}</div>
+                      <div className="book-content " style={{ width: "100%" }}>
+                        <img
+                          src={`${
+                            import.meta.env.VITE_BACKEND_URL
+                          }/images/book/${item?.detail?.thumbnail}`}
+                        />
+                        <div className="action">
+                          <div className="quantity">
+                            Số lượng: {item?.quantity}
+                          </div>
+                          <DeleteTwoTone
+                            style={{ cursor: "pointer" }}
+                            onClick={() => handleRemoveBook(item.id)}
+                            twoToneColor="#eb2f96"
+                          />
+                        </div>
+                      </div>
+                      <div className="sum">
+                        Tổng:{" "}
+                        {new Intl.NumberFormat("vi-VN", {
+                          style: "currency",
+                          currency: "VND",
+                        }).format(currentBookPrice * (item?.quantity ?? 0))}
+                      </div>
+                    </>
+                  )}
                 </div>
               );
             })}

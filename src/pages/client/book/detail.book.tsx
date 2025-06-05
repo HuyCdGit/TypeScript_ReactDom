@@ -1,4 +1,4 @@
-import { Row, Col, Rate, Divider, Button, App as AppAntd } from "antd";
+import { Row, Col, Rate, Divider, Button, App as AppAntd, message } from "antd";
 import ImageGallery from "react-image-gallery";
 import { useEffect, useRef, useState } from "react";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
@@ -7,6 +7,7 @@ import "styles/book.scss";
 import ModalGallery from "./modalGaller.book";
 import BookLoader from "./loader.book";
 import { useCurrentApp } from "@/components/context/app.context";
+import { useNavigate } from "react-router-dom";
 interface IProps {
   viewBook: IBookTable | null;
   setViewBook: (v: IBookTable | null) => void;
@@ -29,7 +30,8 @@ const BookDetail = (props: IProps) => {
   >([]);
   const refGallery = useRef<ImageGallery>(null);
   const [currentQuantity, setCurrentQuantity] = useState(1);
-  const { notification } = AppAntd.useApp();
+  const navigate = useNavigate();
+  const { notification, message } = AppAntd.useApp();
   useEffect(() => {
     setIsLoader(true);
     if (viewBook) {
@@ -90,7 +92,10 @@ const BookDetail = (props: IProps) => {
       }
     }
   };
-  const handleCart = () => {
+  const handleCart = (isBuy = false) => {
+    if (!user) {
+      message.error("tài khoản chưa đăng nhập");
+    }
     const cartStorage = localStorage.getItem("carts");
     if (user && viewBook) {
       const items = [];
@@ -119,16 +124,18 @@ const BookDetail = (props: IProps) => {
             quantity: viewBook?.quantity,
             detail: viewBook,
           });
-
-          notification.success({
-            message: "Update Successed",
-            description: `lưu localStorage thành công`,
-          });
+          // notification.success({
+          //   message: "Update Successed",
+          //   description: `Thêm vào giỏ hàng thành công`,
+          // });
         }
         setCarts(carts);
         localStorage.setItem("carts", JSON.stringify(carts));
       }
     }
+    if (isBuy) {
+      navigate("/order");
+    } else message.success("Thêm sản phẩm vào giỏ hàng thành công.");
   };
   return (
     <div>
@@ -238,7 +245,14 @@ const BookDetail = (props: IProps) => {
                         <BsCartPlus className="icon-cart" />
                         <span>Thêm vào giỏ hàng</span>
                       </button>
-                      <button className="now">Mua ngay</button>
+                      <button
+                        className="now"
+                        onClick={() => {
+                          handleCart(true);
+                        }}
+                      >
+                        Mua ngay
+                      </button>
                     </div>
                   </Col>
                 </Col>

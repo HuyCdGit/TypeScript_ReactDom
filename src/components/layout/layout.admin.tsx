@@ -1,20 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AppstoreOutlined,
   ExceptionOutlined,
   HeartTwoTone,
-  TeamOutlined,
   UserOutlined,
   DollarCircleOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu, Dropdown, Space, Avatar } from "antd";
-import { Outlet } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useCurrentApp } from "../context/app.context";
 import type { MenuProps } from "antd";
 import { logoutAPI } from "@/services/api";
+import { ItemType } from "antd/es/menu/interface";
 type MenuItem = Required<MenuProps>["items"][number];
 
 const { Content, Footer, Sider } = Layout;
@@ -24,7 +24,6 @@ const LayoutAdmin = () => {
   const [activeMenu, setActiveMenu] = useState("dashboard");
   const { user, isAuthenticated, setUser, setIsAuthenticated } =
     useCurrentApp();
-
   const handleLogout = async () => {
     //todo
     const res = await logoutAPI();
@@ -37,35 +36,35 @@ const LayoutAdmin = () => {
 
   const items: MenuItem[] = [
     {
-      label: <Link to="/admin">Dashboard</Link>,
-      key: "dashboard",
+      label: <NavLink to="/admin">Dashboard</NavLink>,
+      key: "/admin",
       icon: <AppstoreOutlined />,
     },
     {
-      label: <span>Manage Users</span>,
-      key: "user",
+      label: <NavLink to="/admin/user">Manage Users</NavLink>,
+      key: "/admin/user",
       icon: <UserOutlined />,
-      children: [
-        {
-          label: <Link to="/admin/user">CRUD</Link>,
-          key: "crud",
-          icon: <TeamOutlined />,
-        },
-        // {
-        //     label: 'Files1',
-        //     key: 'file1',
-        //     icon: <TeamOutlined />,
-        // }
-      ],
+      // children: [
+      //   {
+      //     label: <Link to="/admin/user">CRUD</Link>,
+      //     key: "crud",
+      //     icon: <TeamOutlined />,
+      //   },
+      // {
+      //     label: 'Files1',
+      //     key: 'file1',
+      //     icon: <TeamOutlined />,
+      // }
+      // ],
     },
     {
-      label: <Link to="/admin/book">Manage Books</Link>,
-      key: "book",
+      label: <NavLink to="/admin/book">Manage Books</NavLink>,
+      key: "/admin/book",
       icon: <ExceptionOutlined />,
     },
     {
-      label: <Link to="/admin/order">Manage Orders</Link>,
-      key: "order",
+      label: <NavLink to="/admin/order">Manage Orders</NavLink>,
+      key: "/admin/order",
       icon: <DollarCircleOutlined />,
     },
   ];
@@ -73,8 +72,8 @@ const LayoutAdmin = () => {
   const itemsDropdown = [
     {
       label: (
-        <label style={{ cursor: "pointer" }} onClick={() => alert("me")}>
-          Quản lý tài khoản
+        <label style={{ cursor: "pointer" }}>
+          <Link to={"/account"}>Quản lý tài khoản</Link>
         </label>
       ),
       key: "account",
@@ -106,6 +105,13 @@ const LayoutAdmin = () => {
       return <Outlet />;
     }
   }
+  useEffect(() => {
+    const active: any =
+      items.find((item) => location.pathname === (item!.key as any)) ??
+      "/admin";
+    setActiveMenu(active.key);
+  }, [location]);
+  console.log("check location", activeMenu);
   return (
     <>
       <Layout style={{ minHeight: "100vh" }} className="layout-admin">
@@ -120,6 +126,7 @@ const LayoutAdmin = () => {
           </div>
           <Menu
             defaultSelectedKeys={[activeMenu]}
+            selectedKeys={[activeMenu]}
             mode="inline"
             items={items}
             onClick={(e) => setActiveMenu(e.key)}
